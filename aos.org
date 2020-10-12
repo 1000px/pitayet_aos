@@ -1,0 +1,80 @@
+* 项目开发文档
+** 数据模型
+***** 用户模型 User
+| property      | type    | desc                         |
+|---------------+---------+------------------------------|
+| id            | int     | the primary keys             |
+| user_name     | str     | the user's name              |
+| email         | str     | not null                     |
+| password_hash | str     | hash string                  |
+| role          | int     |                              |
+| disabled      | boolean | default false                |
+| shops         | list    | one user can buy a few shops |
+
+***** 餐馆模型 Shop
+| property | type | desc                         |
+|----------+------+------------------------------|
+| id       | int  | the primary key              |
+| shop_name | str  | the shop's name              |
+| dishes   | list | the dish's list of this shop |
+| shop_img | str  | img uri of shop              |
+| owner_id | int  | the shop's owner             |
+
+***** 菜品模型 Dish
+| property    | type    | desc                      |
+|-------------+---------+---------------------------|
+| id          | int     | the primary key           |
+| dish_name   | str     | the dish's name           |
+| dish_desc   | str     | description of dish       |
+| dish_img    | str     | img uri of dish           |
+| shop_id     | int     | the shop of this dish     |
+| hot         | boolean | default false             |
+| category_id | int     | the category of this dish |
+
+***** 分类模型 Category
+| property      | type | desc                      |   |
+|---------------+------+---------------------------+---|
+| id            | int  | the primary key           |   |
+| category_name | str  | the category's name       |   |
+| order         | int  | order the category        |   |
+| shop_id       | int  | the shop of this category |   |
+
+** RESTFUL接口
+***** 用户接口 User's api
+| Function Name   | Entry Params            | Out Params     | Desc                                   |
+|-----------------+-------------------------+----------------+----------------------------------------|
+| register        | username/email/password | Json format CR | register new account                   |
+| login           | username/password       | same up        |                                        |
+| active          |                         | active link    | return one active link to current user |
+| get_users       |                         | Json format CR | get user list                          |
+| get_user_by_id  | user_id                 | same up        | get user infor by user's id            |
+| edit_user_by_id | username/user_id/...    | same up        | edit user infor by user's id           |
+| del_user_by_id  | user_id                 | same up        | delete current user                    |
+
+***** 餐馆接口 Shop's api
+| Function Name   | Entry Params               | Out Params     | Desc                         |
+|-----------------+----------------------------+----------------+------------------------------|
+| get_shops       | user_id                    | Json format CR | get current user's shop list |
+| get_shop_by_id  | shop_id                    | Json format CR | get shop infor by shop_id    |
+| edit_shop_by_id | shop_id/params             | Json format CR | edit your shop infor         |
+| add_shop        | shopname/shop_img/owner_id | Json format CR | add a new shop               |
+| del_shop_by_id  | shop_id                    | same up        | delete current shop          |
+
+***** 菜品接口 Dish's api
+| Function Name   | Entry Params   | Out Params     | Desc                         |
+|-----------------+----------------+----------------+------------------------------|
+| get_dishes      | shop_id        | Json format CR | get dish list by shop's id   |
+| get_dish_by_id  | dish_id        | same up        | get single dish infor        |
+| edit_dish_by_id | dish_id/params | same up        | edit single dish infor       |
+| add_dish        | shop_id        | same up        | add one dish to the shop     |
+| add_dishes      | list/shop_id   | same up        | add a few dishes to the shop |
+| del_dish_by_id  | dish_id        | same up        | delete current dish          |
+
+***** 分类接口 Category's api
+| Function Name       | Entry Params       | Out Params     | Desc                           |
+|---------------------+--------------------+----------------+--------------------------------|
+| get_categories      | shop_id            | Json format CR | get category list by shop's id |
+| get_category_by_id  | category_id        | same up        | get single category infor      |
+| edit_category_by_id | category_id/params | same up        | edit single category infor     |
+| add_category        | shop_id            | same up        | add one category to the shop   |
+| del_category_by_id  | category_id        | same up        | delete current category        |
