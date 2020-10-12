@@ -10,14 +10,16 @@ class Result():
     is_success = False
     res_obj = None
     """The init function"""
-    def __init__(self, is_success, obj, status_code):
+    def __init__(self, is_success, obj, status_code, msg):
         self.is_success = is_success
         self.res_obj = obj
         self.status_code = status_code
-        res_str = 'failed'
+        res_str = 'fail'
         if self.is_success:
             res_str = 'success'
         self.json_obj = {
+            'code': self.status_code,
+            'msg': msg,
             'res': res_str,
             'data': self.res_obj
         }
