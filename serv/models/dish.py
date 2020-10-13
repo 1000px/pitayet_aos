@@ -18,6 +18,7 @@ from serv import db
 
 class Dish(db.Model):
     """dish's model"""
+    __tablename__ = 'dishes'
     # pylint: disable=no-member
     id = db.Column(db.Integer, primary_key=True)
     dish_name = db.Column(db.String(256), unique=True, index=True)
@@ -31,7 +32,7 @@ class Dish(db.Model):
         """return json object of Dish instance"""
         return {
             'id': self.id,
-            'dishname': self.dishname,
+            'dish_name': self.dish_name,
             'dish_desc': self.dish_desc,
             'dish_img': self.dish_img,
             'shop': self.shop_id,

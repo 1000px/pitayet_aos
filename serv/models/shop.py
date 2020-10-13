@@ -12,6 +12,7 @@ shop's model
 """
 # pylint: disable=import-error
 from serv import db
+from serv.models.user import User
 
 
 class Shop(db.Model):
@@ -29,8 +30,8 @@ class Shop(db.Model):
         """return json object of the Shop instance"""
         return {
             'id': self.id,
-            'shopname': self.shopname,
+            'shop_name': self.shop_name,
             'shop_img': self.shop_img,
-            'owner': self.owner_id,
+            'owner': User.query.filter_by(id=self.owner_id).first().to_json(),
             'dishes': [dish.to_json() for dish in self.dishes]
         }

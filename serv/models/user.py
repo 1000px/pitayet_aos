@@ -65,7 +65,7 @@ class User(db.Model):
         """return json object"""
         return {
             'id': self.id,
-            'username': self.username,
+            'user_name': self.user_name,
             'email': self.email,
             'role': self.role,
             'disabled': self.disabled

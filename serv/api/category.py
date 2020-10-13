@@ -17,6 +17,7 @@ from serv.api import api
 from serv.utils import obj_result
 from flask import request
 from serv.models import Category, Shop
+from sqlalchemy.exc import IntegrityError
 
 
 @api.route('/categories/<int:shop_id>')
@@ -38,7 +39,7 @@ def get_category_by_id(category_id):
     if category is None:
         return obj_result.Result(False, None, 404,
                                  'Category Not Found.').get_json_obj()
-    return obj_result.Result(True, category, 200, 'OK').get_json_obj()
+    return obj_result.Result(True, category.to_json(), 200, 'OK').get_json_obj()
 
 
 @api.route('/category/<int:category_id>', methods=['PUT'])
@@ -70,12 +71,12 @@ def edit_category_by_id(category_id):
 @api.route('/category/<int:shop_id>', methods=['POST'])
 def add_category(shop_id):
     """add category to shop"""
-    shop = Shop.query.filter_by(shop_id=shop_id).first()
+    shop = Shop.query.filter_by(id=shop_id).first()
     if shop is None:
         return obj_result.Result(False, None, 400,
                                  'Need Neccessary Params: shop_id').get_json_obj()
     category_name = request.json.get('category_name')
-    if category_name is None:
+    if category_name is None or category_name == '':
         return obj_result.Result(False, None, 400,
                                  'Need Neccessary Params: category_name').get_json_obj()
     order = request.json.get('order')
@@ -86,7 +87,11 @@ def add_category(shop_id):
     category.shop_id = shop_id
     # pylint: disable=no-member
     db.session.add(category)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        return obj_result.Result(False, 'IntegrityError', 400,
+                                 'Params Not Available.').get_json_obj()
     return obj_result.Result(True, category.to_json(), 200,
                              'OK').get_json_obj()
 

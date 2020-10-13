@@ -17,6 +17,7 @@ from serv.api import api
 from serv.utils import obj_result
 from serv.models import Shop
 from flask import request, url_for
+from sqlalchemy.exc import IntegrityError
 
 
 @api.route('/shops/<int:user_id>')
@@ -72,13 +73,13 @@ def add_shop():
     shop_name = request.json.get('shop_name')
     shop_img = request.json.get('shop_img')
     user_id = request.json.get('user_id')
-
+    print('1000---->>', user_id)
     shop = Shop()
-    if user_id is None:
+    if user_id is None or user_id == '':
         return obj_result.Result(False, None, 400,
                                  'Need Neccessary Params: user_id').get_json_obj()
     else:
-        shop.own_id = user_id
+        shop.owner_id = user_id
 
     if shop_name is None:
         return obj_result.Result(False, None, 400,
@@ -91,8 +92,12 @@ def add_shop():
 
     # pylint: disable=no-member
     db.session.add(shop)
-    db.session.commit()
-    return obj_result.Result(True, shop, 200,
+    try:
+        db.session.commit()
+    except IntegrityError:
+        return obj_result.Result(False, 'IntegrityError', 400,
+                                 'Params Not Available.').get_json_obj()
+    return obj_result.Result(True, shop.to_json(), 200,
                              'OK').get_json_obj()
 
 
