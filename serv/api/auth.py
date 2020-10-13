@@ -21,12 +21,12 @@ auth = HTTPTokenAuth(scheme="Bearer")
 @api.route('/register', methods=['POST'])
 def register():
     """register api"""
-    reg_obj = obj_result.Result(True, None, 200)
+    reg_obj = obj_result.Result(True, None, 200, 'OK').get_json_obj()
     return reg_obj
 
 
 @api.route('/login', methods=['POST'])
 def login():
     """login api"""
-    login_obj = obj_result.Result(True, None, 200)
+    login_obj = obj_result.Result(True, None, 200, 'OK').get_json_obj()
     return login_obj
