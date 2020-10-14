@@ -8,13 +8,21 @@ you can get a timeout token code after login
 | register        | username/email/password | Json format CR | register new account                   |
 | login           | username/password       | same up        |                                        |
 | active          |                         | active link    | return one active link to current user |
+
+errot_types:
+password_err
+format_err
+not_exist
+account_not_active
+params_err
+params_lack
 """
 from serv import db
 from serv.api import api
 from serv.models import User
 from flask_httpauth import HTTPTokenAuth
 from sqlalchemy.exc import IntegrityError
-from serv.utils import obj_result
+from serv.utils import klass_response
 from flask import request
 import re
 
@@ -28,20 +36,17 @@ def register():
     user_name = request.json.get('user_name')
     pat_user_name = r'^[0-9a-zA-Z_]{4,18}$'
     if re.match(pat_user_name, user_name) is None:
-        return obj_result.Result(False, None, 400,
-                                 'Wrong UserName Format.').get_json_obj()
+        return klass_response.FailedResult('format_err', 'user name').to_json()
 
     password = request.json.get('password')
-    pat_password = r'^[0-9a-zA-Z]{6, 20}$'
+    pat_password = r'^[0-9a-zA-Z_]{6,20}$'
     if re.match(pat_password, password) is None:
-        return obj_result.Result(False, None, 400,
-                                 'Wrong Password Format.').get_json_obj()
+        return klass_response.FailedResult('format_err', 'password').to_json()
 
     email = request.json.get('email')
     pat_email = r'^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$'
     if re.match(pat_email, email) is None:
-        return obj_result.Result(False, None, 400,
-                                 'Wrong Email Format.').get_json_obj()
+        return klass_response.FailedResult('format_err', 'email').to_json()
     my = User()
     my.user_name = user_name
     my.password = password
@@ -52,10 +57,10 @@ def register():
     try:
         db.session.commit()
     except IntegrityError:
-        return obj_result.Result(False, 'IntegrityError', 400,
-                                 'Params Not Available').get_json_obj()
-    return obj_result.Result(True, my.to_json(), 200,
-                             'You need to active this account before using it.').get_json_obj()
+        return klass_response.FailedResult('params_err',
+                                           'mysql commit').to_json()
+
+    return klass_response.SuccessResult(my.to_json(), 200).to_json()
 
 
 @api.route('/login', methods=['POST'])
@@ -65,15 +70,14 @@ def login():
     user_name = request.json.get('user_name')
     user = User.query.filter_by(user_name=user_name).first()
     if user is None:
-        return obj_result.Result(False, None, 400,
-                                 'User Not Exist.').get_json_obj()
+        return klass_response.FailedResult('not_exist', 'User').to_json()
     if not user.disabled:
-        return obj_result.Result(False, None, 204,
-                                 'You must active this account first.').get_json_obj()
+        return klass_response.FailedResult('account_not_active',
+                                           user.user_name).to_json()
 
     password = request.json.get('password')
     if not user.verify_password(password):
-        return obj_result.Result(False, None, 400,
-                                 'Password Not Correct.').get_json_obj()
+        return klass_response.FailedResult('password_err',
+                                           user.user_name).to_json()
 
-    return obj_result.Result(True, user.to_json(), 200, 'OK').get_json_obj()
+    return klass_response.SuccessResult(user.to_json(), 200).to_json()

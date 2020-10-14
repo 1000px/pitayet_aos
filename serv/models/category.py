@@ -11,6 +11,7 @@ category's model
 """
 # pylint: disable=import-error
 from serv import db
+from serv.models.shop import Shop
 
 
 class Category(db.Model):
@@ -34,5 +35,5 @@ class Category(db.Model):
             'id': self.id,
             'category_name': self.category_name,
             'order': self.order,
-            'shop': self.shop_id
+            'shop_id': self.shop_id
         }

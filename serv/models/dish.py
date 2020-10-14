@@ -5,7 +5,7 @@ dish's model
 | property    | type    | desc                      |
 |-------------+---------+---------------------------|
 | id          | int     | the primary key           |
-| dish_name    | str     | the dish's name           |
+| dish_name   | str     | the dish's name           |
 | dish_desc   | str     | description of dish       |
 | dish_img    | str     | img uri of dish           |
 | shop_id     | int     | the shop of this dish     |
@@ -14,6 +14,8 @@ dish's model
 """
 # pylint: disable=import-error
 from serv import db
+from serv.models.shop import Shop
+from serv.models.category import Category
 
 
 class Dish(db.Model):
@@ -35,7 +37,7 @@ class Dish(db.Model):
             'dish_name': self.dish_name,
             'dish_desc': self.dish_desc,
             'dish_img': self.dish_img,
-            'shop': self.shop_id,
+            'shop_id': self.shop_id,
             'hot': self.hot,
-            'category': self.category_id
+            'category_id': self.category_id
         }

@@ -10,11 +10,19 @@ category's routers
 | edit_category_by_id | category_id/params | same up        | edit single category infor     |
 | add_category        | shop_id            | same up        | add one category to the shop   |
 | del_category_by_id  | category_id        | same up        | delete current category        |
+
+errot_types:
+password_err
+format_err
+not_exist
+account_not_active
+params_err
+params_lack
 """
 # pylint: disable=import-error
 from serv import db
 from serv.api import api
-from serv.utils import obj_result
+from serv.utils import klass_response
 from flask import request
 from serv.models import Category, Shop
 from sqlalchemy.exc import IntegrityError
@@ -25,11 +33,10 @@ def get_categories(shop_id):
     """get categories by shop's id"""
     categories = Category.query.filter_by(shop_id=shop_id).all()
     if len(categories) == 0:
-        return obj_result.Result(False, None, 404,
-                                 'Category List is Null').get_json_obj()
+        return klass_response.FailedResult('not_exist',
+                                           'Category List').to_json()
     json_categories = [category.to_json() for category in categories]
-    return obj_result.Result(True, json_categories, 200,
-                             'OK').get_json_obj()
+    return klass_response.SuccessResult(json_categories, 200).to_json()
 
 
 @api.route('/category/<int:category_id>')
@@ -37,9 +44,9 @@ def get_category_by_id(category_id):
     """get category by category's id"""
     category = Category.query.filter_by(id=category_id).first()
     if category is None:
-        return obj_result.Result(False, None, 404,
-                                 'Category Not Found.').get_json_obj()
-    return obj_result.Result(True, category.to_json(), 200, 'OK').get_json_obj()
+        return klass_response.FailedResult('not_exist',
+                                           'Category').to_json()
+    return klass_response.SuccessResult(category.to_json(), 200).to_json()
 
 
 @api.route('/category/<int:category_id>', methods=['PUT'])
@@ -47,25 +54,28 @@ def edit_category_by_id(category_id):
     """edit category infor by category's id"""
     category = Category.query.filter_by(id=category_id).first()
     if category is None:
-        return obj_result.Result(False, None, 404,
-                                 'Category Not Found.').get_json_obj()
+        return klass_response.FailedResult('not_exist',
+                                           'Category').to_json()
     category_name = request.json.get('category_name')
     order = request.json.get('order')
 
-    if category_name is None:
-        return obj_result.Result(False, None, 400,
-                                 'Need Neccessary Params: category_name').get_json_obj()
+    if category_name is None or category_name == '':
+        return klass_response.FailedResult('params_lack',
+                                           'category_name').to_json()
     else:
         category.category_name = category_name
 
-    if order is not None:
+    if order is not None or order != '':
         category.order = order
 
     # pylint: disable=no-member
     db.session.add(category)
-    db.session.commit()
-    return obj_result.Result(True, category.to_json(), 200,
-                             'OK').get_json_obj()
+    try:
+        db.session.commit()
+    except IntegrityError:
+        return klass_response.FailedResult('need_unique',
+                                           'Category').to_json()
+    return klass_response.SuccessResult(category.to_json(), 200).to_json()
 
 
 @api.route('/category/<int:shop_id>', methods=['POST'])
@@ -73,14 +83,13 @@ def add_category(shop_id):
     """add category to shop"""
     shop = Shop.query.filter_by(id=shop_id).first()
     if shop is None:
-        return obj_result.Result(False, None, 400,
-                                 'Need Neccessary Params: shop_id').get_json_obj()
+        return klass_response.FailedResult('params_lack', 'shop_id').to_json()
     category_name = request.json.get('category_name')
     if category_name is None or category_name == '':
-        return obj_result.Result(False, None, 400,
-                                 'Need Neccessary Params: category_name').get_json_obj()
+        return klass_response.FailedResult('params_lack',
+                                           'category_name').to_json()
     order = request.json.get('order')
-    if order is None:
+    if order is None or order == '':
         order = 0
     category = Category(category_name)
     category.order = order
@@ -90,10 +99,9 @@ def add_category(shop_id):
     try:
         db.session.commit()
     except IntegrityError:
-        return obj_result.Result(False, 'IntegrityError', 400,
-                                 'Params Not Available.').get_json_obj()
-    return obj_result.Result(True, category.to_json(), 200,
-                             'OK').get_json_obj()
+        return klass_response.FailedResult('need_unique',
+                                           'Category').to_json()
+    return klass_response.SuccessResult(category.to_json(), 200).to_json()
 
 
 @api.route('/category/<int:category_id>', methods=['DELETE'])
@@ -101,10 +109,8 @@ def del_category_by_id(category_id):
     """delete category by category's id"""
     category = Category.query.filter_by(id=category_id).first()
     if category is None:
-        return obj_result.Result(False, None, 400,
-                                 'Current Category is not exist.').get_json_obj()
+        return klass_response.FailedResult('not_exist', 'Category').to_json()
     # pylint: disable=no-member
     db.session.delete(category)
     db.session.commit()
-    return obj_result.Result(True, None, 200,
-                             'Delete Category Success.').get_json_obj()
+    return klass_response.SuccessResult(None, 200).to_json()
