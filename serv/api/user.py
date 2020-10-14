@@ -69,18 +69,14 @@ def edit_user_by_id(user_id):
     if user is None:
         return klass_response.FailedResult('not_exist', 'User').to_json()
 
-    user_name = request.json.get('username')
-    password = request.json.get('password')
+    user_name = request.json.get('user_name')
     role = request.json.get('role')
 
-    if user_name is None and password is None and role is None:
+    if user_name is None or user_name == '':
         return klass_response.FailedResult('params_lack',
-                                           'user_name,password,role').to_json()
-    if user_name is not None or user_name != '':
-        user.user_name = user_name
-    if password is not None or password != '':
-        user.password = password
-    if role is not None or role != '':
+                                           'user_name').to_json()
+    user.user_name = user_name
+    if role is not None and role != '':
         user.role = role
 
     # pylint: disable=no-member

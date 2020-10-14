@@ -7,6 +7,7 @@ the module of creating a flask instance
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import config
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 
@@ -20,5 +21,8 @@ def create_app(config_name):
 
     from serv.api import api as api_blueprint
     app.register_blueprint(api_blueprint)
+
+    # pylint: disable=unused-variable
+    migrate = Migrate(app, db)
 
     return app

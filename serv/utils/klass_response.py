@@ -75,7 +75,6 @@ class FailedResult():
     """Failed Result class"""
     def __init__(self, error_type, role):
         self.result = error_dict[error_type]
-        print('1000', self.result['msg'])
         self.result['msg'] = role + ' : ' + self.result['msg']
 
     def to_json(self):

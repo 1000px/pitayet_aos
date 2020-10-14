@@ -34,13 +34,14 @@ class DevConfig(Config):
 
 class TestConfig(Config):
     """special config for test env"""
-    SQLALCHEMY_DATA_URI = os.environ.get('TEST_DATABASE_URL') or \
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
 
 
 class ProductionConfig(Config):
     """special config for production env"""
-    SQLALCHEMY_DATA_URI = os.environ.get('PRODUCTION_DATABASE_URL') or \
+    SQLALCHEMY_DATABASE_URI = os.environ.get('PRODUCTION_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-production.sqlite')
 
 

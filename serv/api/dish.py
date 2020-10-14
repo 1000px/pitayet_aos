@@ -126,6 +126,9 @@ def hoty_dish_by_id(dish_id):
 def add_dishes(shop_id):
     """add a list of dishes to current shop"""
     # add shop exist logic's code
+    shop = Shop.query.filter_by(id=shop_id).first()
+    if shop is None:
+        return klass_response.FailedResult('not_exist', 'Shop').to_json()
     dishes_from_request = request.json.get('dishes')
     for dish in dishes_from_request:
         # pylint: disable=no-member
@@ -155,6 +158,39 @@ def add_dishes(shop_id):
         db.session.rollback()
     db.session.flush()
     return klass_response.SuccessResult(None, 200).to_json()
+
+
+@api.route('/dish/<int:shop_id>', methods=['POST'])
+def add_dish(shop_id):
+    """add one dish to current shop"""
+    # shop exist logic's code
+    shop = Shop.query.filter_by(id=shop_id).first()
+    if shop is None:
+        return klass_response.FailedResult('not_exist', 'Shop')
+    dish = Dish()
+    dish_name = request.json.get('dish_name')
+    dish_desc = request.json.get('dish_desc')
+    dish_img = request.json.get('dish_img')
+    if dish_name is None or dish_name == '':
+        return klass_response.FailedResult('params_lack', 'dish_name').to_json()
+    else:
+        dish.dish_name = dish_name
+    if dish_img is None or dish_img == '':
+        return klass_response.FailedResult('params_lack', 'dish_img').to_json()
+    else:
+        dish.dish_img = dish_img
+
+    if dish_desc is not None:
+        dish.dish_desc = dish_desc
+    dish.shop_id = shop_id
+
+    db.session.add(dish)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+    db.session.flush()
+    return klass_response.SuccessResult(dish.to_json(), 200).to_json()
 
 
 @api.route('/dish/<int:dish_id>', methods=['DELETE'])

@@ -5,6 +5,7 @@ The project entry
 You can run this server at this
 """
 import os
+import click
 from serv import create_app, db
 from serv.models import User, Shop, Dish, Category
 
@@ -22,6 +23,16 @@ def make_shell_context():
         Dish=Dish,
         Category=Category
     )
+
+
+@app.cli.command()
+def test():
+    """Run the unit tests."""
+    import unittest
+    discover_ = unittest.TestLoader().discover('tests', pattern='test*.py')
+    suite = unittest.TestSuite()
+    suite.addTest(discover_)
+    unittest.TextTestRunner(verbosity=2).run(suite)
 
 
 if __name__ == '__main__':
