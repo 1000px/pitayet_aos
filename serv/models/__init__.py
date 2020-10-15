@@ -10,3 +10,4 @@ from .user import User
 from .shop import Shop
 from .dish import Dish
 from .category import Category
+from .order import Order

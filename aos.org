@@ -12,13 +12,13 @@
 | shops         | list    | one user can buy a few shops |
 
 ***** 餐馆模型 Shop
-| property | type | desc                         |
-|----------+------+------------------------------|
-| id       | int  | the primary key              |
+| property  | type | desc                         |
+|-----------+------+------------------------------|
+| id        | int  | the primary key              |
 | shop_name | str  | the shop's name              |
-| dishes   | list | the dish's list of this shop |
-| shop_img | str  | img uri of shop              |
-| owner_id | int  | the shop's owner             |
+| dishes    | list | the dish's list of this shop |
+| shop_img  | str  | img uri of shop              |
+| owner_id  | int  | the shop's owner             |
 
 ***** 菜品模型 Dish
 | property    | type    | desc                      |
@@ -30,14 +30,28 @@
 | shop_id     | int     | the shop of this dish     |
 | hot         | boolean | default false             |
 | category_id | int     | the category of this dish |
+| dish_price  | float   | the dish's price          |
+| total       | int     | total sails of this dish  |
 
 ***** 分类模型 Category
-| property      | type | desc                      |   |
-|---------------+------+---------------------------+---|
-| id            | int  | the primary key           |   |
-| category_name | str  | the category's name       |   |
-| order         | int  | order the category        |   |
-| shop_id       | int  | the shop of this category |   |
+| property      | type | desc                      |
+|---------------+------+---------------------------|
+| id            | int  | the primary key           |
+| category_name | str  | the category's name       |
+| order         | int  | order the category        |
+| shop_id       | int  | the shop of this category |
+
+***** 订单模型 Order
+| property     | type  | desc                                             |
+|--------------+-------+--------------------------------------------------|
+| id           | int   | the primary key                                  |
+| order_name   | str   | a long char list,must unique                     |
+| start_time   | date  | order start                                      |
+| end_time     | date  | order end                                        |
+| order_price  | float |                                                  |
+| order_detail | list  | eg:'[id] [count] [price];[id2] [count] [price2]' |
+
+***** 餐桌模型 Desk
 
 ** RESTFUL接口
 ***** 用户接口 User's api
@@ -78,4 +92,15 @@
 | edit_category_by_id | category_id/params | same up        | edit single category infor     |
 | add_category        | shop_id            | same up        | add one category to the shop   |
 | del_category_by_id  | category_id        | same up        | delete current category        |
-|                     |                    |                |                                |
+
+***** 订单接口 Order's api
+| Function Name       | Entry Params | Out Params     | Desc                           |
+|---------------------+--------------+----------------+--------------------------------|
+| get_orders          | shop_id      | Json format CR | get order list by shop's id    |
+| get_order_by_id     | order_id     | same up        | get single order infor         |
+| edit_order_by_id    | order_id     | same up        | edit order detail              |
+| update_order_dishes | order_id     | same up        | update dish list of this order |
+| get_dishes_of_order | order_id     | same up        | get dishes of this order       |
+
+
+** 计划
