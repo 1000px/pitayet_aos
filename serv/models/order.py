@@ -12,8 +12,8 @@ order's model file
 | order_price  | float |                                                  |
 | order_detail | list  | eg:'[id] [count] [price];[id2] [count] [price2]' |
 """
-from serv import db
 from datetime import datetime
+from serv import db
 
 
 class Order(db.Model):
@@ -26,7 +26,19 @@ class Order(db.Model):
     start_time = db.Column(db.DateTime(), default=datetime.utcnow)
     end_time = db.Column(db.DateTime())
     order_price = db.Column(db.Float)
+    shop_id = db.Column(db.Integer, db.ForeignKey('shops.id'))
+    # [id] [count] [price_single];[id] [count] [price_single];
     order_detail = db.Column(db.Text())
+
+    @property
+    def dishes(self):
+        """readable property"""
+        # str to list
+        return [dish.split() for dish in self.order_detail.split(';')]
+
+    @dishes.setter
+    def dishes(self, dishes):
+        self.detail = ';'.join([''.join(dish) for dish in dishes])
 
     def to_json(self):
         """return json object"""
@@ -35,5 +47,5 @@ class Order(db.Model):
             'start_time': self.start_time,
             'end_time': self.end_time,
             'order_price': self.order_price,
-            'dishes': self.order_detail
+            'dishes': self.dishes
         }

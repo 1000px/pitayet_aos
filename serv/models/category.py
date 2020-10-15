@@ -25,7 +25,7 @@ class Category(db.Model):
     shop_id = db.Column(db.Integer, db.ForeignKey('shops.id'))
 
     # pylint: disable=unused-argument
-    def __init__(self, category_name, **kw):
+    def __init__(self, category_name):
         """init Category instance"""
         self.category_name = category_name
 
