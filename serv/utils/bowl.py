@@ -20,4 +20,5 @@ class Bowl():
         while length:
             key += random.choice(string.ascii_letters + string.digits)
             length -= 1
-        return time.strftime('%Y_%m_%d_%H%M%S', time.localtime()) + hash(key)
+        time_str = time.strftime('%Y_%m_%d_%H%M%S', time.localtime())
+        return time_str + str(hash(key))

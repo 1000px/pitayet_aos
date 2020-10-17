@@ -49,7 +49,7 @@ def get_users():
         'next_url': nextu,
         'total': pagination.total
     }
-    return klass_response.SuccessResult(data_obj, 200).to_json()
+    return klass_response.SuccessResult(data_obj, 200)
 
 
 @api.route('/user/<int:user_id>')
@@ -57,9 +57,9 @@ def get_user_by_id(user_id):
     """get user infor by user's id"""
     user = User.query.filter_by(id=user_id).first()
     if user is None:
-        return klass_response.FailedResult('not_exist', 'User').to_json()
+        return klass_response.FailedResult('not_exist', 'User')
 
-    return klass_response.SuccessResult(user.to_json(), 200).to_json()
+    return klass_response.SuccessResult(user.to_json(), 200)
 
 
 @api.route('/user/<int:user_id>', methods=['PUT'])
@@ -67,14 +67,14 @@ def edit_user_by_id(user_id):
     """edit user infor by user's id"""
     user = User.query.filter_by(id=user_id).first()
     if user is None:
-        return klass_response.FailedResult('not_exist', 'User').to_json()
+        return klass_response.FailedResult('not_exist', 'User')
 
     user_name = request.json.get('user_name')
     role = request.json.get('role')
 
     if user_name is None or user_name == '':
         return klass_response.FailedResult('params_lack',
-                                           'user_name').to_json()
+                                           'user_name')
     user.user_name = user_name
     if role is not None and role != '':
         user.role = role
@@ -82,7 +82,7 @@ def edit_user_by_id(user_id):
     # pylint: disable=no-member
     db.session.add(user)
     db.session.commit()
-    return klass_response.SuccessResult(user.to_json(), 200).to_json()
+    return klass_response.SuccessResult(user.to_json(), 200)
 
 
 @api.route('/user/<int:user_id>', methods=['DELETE'])
@@ -90,8 +90,8 @@ def del_user_by_id(user_id):
     """delete user infor by user's id"""
     user = User.query.filter_by(id=user_id).first()
     if user is None:
-        return klass_response.FailedResult('not_exist', 'User').to_json()
+        return klass_response.FailedResult('not_exist', 'User')
     # pylint: disable=no-member
     db.session.delete(user)
     db.session.commit()
-    return klass_response.SuccessResult(None, 200).to_json()
+    return klass_response.SuccessResult(None, 200)

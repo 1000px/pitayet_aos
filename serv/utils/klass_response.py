@@ -55,29 +55,25 @@ error_dict = {
 
 class SuccessResult():
     """Success Result class"""
-    def __init__(self, obj, status_code):
-        self.result = obj
-        self.status_code = status_code
+    def __new__(self, obj, status_code):
+        result = obj
 
-        self.json_result = {
-            'code': self.status_code,
-            'data': self.result
+        json_result = {
+            'code': status_code,
+            'data': result
         }
 
-    def to_json(self):
-        """return the json result"""
-        response = jsonify(self.json_result)
-        response.status_code = self.status_code
+        response = jsonify(json_result)
+        response.status_code = status_code
         return response
 
 
 class FailedResult():
     """Failed Result class"""
-    def __init__(self, error_type, role):
-        self.result = error_dict[error_type]
-        self.result['msg'] = role + ' : ' + self.result['msg']
+    def __new__(self, error_type, role):
+        result = error_dict[error_type]
+        result['msg'] = role + ' : ' + result['msg']
 
-    def to_json(self):
-        response = jsonify(self.result)
-        response.status_code = self.result['status']
+        response = jsonify(result)
+        response.status_code = result['status']
         return response

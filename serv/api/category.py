@@ -34,9 +34,9 @@ def get_categories(shop_id):
     categories = Category.query.filter_by(shop_id=shop_id).all()
     if len(categories) == 0:
         return klass_response.FailedResult('not_exist',
-                                           'Category List').to_json()
+                                           'Category List')
     json_categories = [category.to_json() for category in categories]
-    return klass_response.SuccessResult(json_categories, 200).to_json()
+    return klass_response.SuccessResult(json_categories, 200)
 
 
 @api.route('/category/<int:category_id>')
@@ -45,8 +45,8 @@ def get_category_by_id(category_id):
     category = Category.query.filter_by(id=category_id).first()
     if category is None:
         return klass_response.FailedResult('not_exist',
-                                           'Category').to_json()
-    return klass_response.SuccessResult(category.to_json(), 200).to_json()
+                                           'Category')
+    return klass_response.SuccessResult(category.to_json(), 200)
 
 
 @api.route('/category/<int:category_id>', methods=['PUT'])
@@ -55,13 +55,13 @@ def edit_category_by_id(category_id):
     category = Category.query.filter_by(id=category_id).first()
     if category is None:
         return klass_response.FailedResult('not_exist',
-                                           'Category').to_json()
+                                           'Category')
     category_name = request.json.get('category_name')
     order = request.json.get('order')
 
     if category_name is None or category_name == '':
         return klass_response.FailedResult('params_lack',
-                                           'category_name').to_json()
+                                           'category_name')
     else:
         category.category_name = category_name
 
@@ -83,11 +83,11 @@ def add_category(shop_id):
     """add category to shop"""
     shop = Shop.query.filter_by(id=shop_id).first()
     if shop is None:
-        return klass_response.FailedResult('params_lack', 'shop_id').to_json()
+        return klass_response.FailedResult('params_lack', 'shop_id')
     category_name = request.json.get('category_name')
     if category_name is None or category_name == '':
         return klass_response.FailedResult('params_lack',
-                                           'category_name').to_json()
+                                           'category_name')
     order = request.json.get('order')
     if order is None or order == '':
         order = 0
@@ -109,8 +109,8 @@ def del_category_by_id(category_id):
     """delete category by category's id"""
     category = Category.query.filter_by(id=category_id).first()
     if category is None:
-        return klass_response.FailedResult('not_exist', 'Category').to_json()
+        return klass_response.FailedResult('not_exist', 'Category')
     # pylint: disable=no-member
     db.session.delete(category)
     db.session.commit()
-    return klass_response.SuccessResult(None, 200).to_json()
+    return klass_response.SuccessResult(None, 200)

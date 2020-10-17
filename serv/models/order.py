@@ -34,11 +34,15 @@ class Order(db.Model):
     def dishes(self):
         """readable property"""
         # str to list
-        return [dish.split() for dish in self.order_detail.split(';')]
+        if self.order_detail is None:
+            return None
+        return [{'id': int(dish.split(' ')[0]),
+                'count': int(dish.split(' ')[1])}
+                for dish in self.order_detail.split(';')]
 
     @dishes.setter
     def dishes(self, dishes):
-        self.detail = ';'.join([''.join(dish) for dish in dishes])
+        self.order_detail = ';'.join([' '.join(dish) for dish in dishes])
 
     def to_json(self):
         """return json object"""

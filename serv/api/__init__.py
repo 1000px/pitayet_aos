@@ -13,5 +13,6 @@ from . import user
 from . import shop
 from . import dish
 from . import category
+from . import order
 
 from . import auth

@@ -29,7 +29,7 @@ from serv.models import Dish, Shop
 from flask import request, url_for
 from serv.utils import klass_response
 from sqlalchemy.exc import IntegrityError
-import json
+
 
 @api.route('/dishes/<int:common_id>/<string:type>')
 def get_dishes(common_id, type):
@@ -50,7 +50,7 @@ def get_dishes(common_id, type):
         return klass_response.SuccessResult({
             'total': count,
             'dishes': [dish.to_json() for dish in dishes]
-        }, 200).to_json()
+        }, 200)
     else:
         # get dishes by page number
         if page is None:
@@ -71,7 +71,7 @@ def get_dishes(common_id, type):
             'total': pagination.total,
             'dishes': [dish.to_json() for dish in dishes]
         }
-        return klass_response.SuccessResult(dish_res, 200).to_json()
+        return klass_response.SuccessResult(dish_res, 200)
 
 
 @api.route('/dish/<int:dish_id>')
@@ -79,8 +79,8 @@ def get_dish_by_id(dish_id):
     """get dish by dish's id"""
     dish = Dish.query.filter_by(id=dish_id).first()
     if dish is None:
-        return klass_response.FailedResult('not_exist', 'Dish').to_json()
-    return klass_response.SuccessResult(dish.to_json(), 200).to_json()
+        return klass_response.FailedResult('not_exist', 'Dish')
+    return klass_response.SuccessResult(dish.to_json(), 200)
 
 
 @api.route('/dish/<int:dish_id>', methods=['PUT'])
@@ -88,14 +88,14 @@ def edit_dish_by_id(dish_id):
     """edit dish by dish's id"""
     dish = Dish.query.filter_by(id=dish_id).first()
     if dish is None:
-        return klass_response.FailedResult('not_exist', 'Dish').to_json()
+        return klass_response.FailedResult('not_exist', 'Dish')
     dish_name = request.json.get('dish_name')
     dish_desc = request.json.get('dish_desc')
     dish_img = request.json.get('dish_img')
 
     if dish_name is None and dish_desc is None and dish_img is None:
         return klass_response.FailedResult('params_lack',
-                                           'dish_name,dish_desc,dish_img').to_json()
+                                           'dish_name,dish_desc,dish_img')
     if dish_name is not None and dish_name != '':
         dish.dish_name = dish_name
     if dish_desc is not None and dish_desc != '':
@@ -106,7 +106,7 @@ def edit_dish_by_id(dish_id):
     # pylint: disable=no-member
     db.session.add(dish)
     db.session.commit()
-    return klass_response.SuccessResult(dish.to_json(), 200).to_json()
+    return klass_response.SuccessResult(dish.to_json(), 200)
 
 
 @api.route('/dish/hoty/<int:dish_id>', methods=['PUT'])
@@ -114,12 +114,12 @@ def hoty_dish_by_id(dish_id):
     """toggle dish stutas (hot or not) by dish's id"""
     dish = Dish.query.filter_by(id=dish_id).first()
     if dish is None:
-        return klass_response.FailedResult('not_exist', 'Dish').to_json()
+        return klass_response.FailedResult('not_exist', 'Dish')
     dish.hot = not dish.hot
     # pylint: disable=no-member
     db.session.add(dish)
     db.session.commit()
-    return klass_response.SuccessResult(dish.to_json(), 200).to_json()
+    return klass_response.SuccessResult(dish.to_json(), 200)
 
 
 @api.route('/dishes/<int:shop_id>', methods=['POST'])
@@ -128,18 +128,18 @@ def add_dishes(shop_id):
     # add shop exist logic's code
     shop = Shop.query.filter_by(id=shop_id).first()
     if shop is None:
-        return klass_response.FailedResult('not_exist', 'Shop').to_json()
+        return klass_response.FailedResult('not_exist', 'Shop')
     dishes_from_request = request.json.get('dishes')
     for dish in dishes_from_request:
         # pylint: disable=no-member
         o_dish = Dish()
         if dish.get('dish_name') is None or dish.get('dish_name') == '':
-            return klass_response.FailedResult('params_lack', 'dish_name').to_json()
+            return klass_response.FailedResult('params_lack', 'dish_name')
         else:
             o_dish.dish_name = dish.get('dish_name')
 
         if dish.get('dish_img') is None or dish.get('dish_img') == '':
-            return klass_response.FailedResult('params_lack', 'dish_img').to_json()
+            return klass_response.FailedResult('params_lack', 'dish_img')
         else:
             o_dish.dish_img = dish.get('dish_img')
 
@@ -157,7 +157,7 @@ def add_dishes(shop_id):
     except IntegrityError:
         db.session.rollback()
     db.session.flush()
-    return klass_response.SuccessResult(None, 200).to_json()
+    return klass_response.SuccessResult(None, 200)
 
 
 @api.route('/dish/<int:shop_id>', methods=['POST'])
@@ -172,11 +172,11 @@ def add_dish(shop_id):
     dish_desc = request.json.get('dish_desc')
     dish_img = request.json.get('dish_img')
     if dish_name is None or dish_name == '':
-        return klass_response.FailedResult('params_lack', 'dish_name').to_json()
+        return klass_response.FailedResult('params_lack', 'dish_name')
     else:
         dish.dish_name = dish_name
     if dish_img is None or dish_img == '':
-        return klass_response.FailedResult('params_lack', 'dish_img').to_json()
+        return klass_response.FailedResult('params_lack', 'dish_img')
     else:
         dish.dish_img = dish_img
 
@@ -190,7 +190,7 @@ def add_dish(shop_id):
     except IntegrityError:
         db.session.rollback()
     db.session.flush()
-    return klass_response.SuccessResult(dish.to_json(), 200).to_json()
+    return klass_response.SuccessResult(dish.to_json(), 200)
 
 
 @api.route('/dish/<int:dish_id>', methods=['DELETE'])
@@ -198,8 +198,8 @@ def del_dish_by_id(dish_id):
     """delete dish by dish's id"""
     dish = Dish.query.filter_by(id=dish_id).first()
     if dish is None:
-        return klass_response.FailedResult('not_exist', 'Dish').to_json()
+        return klass_response.FailedResult('not_exist', 'Dish')
     # pylint: disable=no-member
     db.session.delete(dish)
     db.session.commit()
-    return klass_response.SuccessResult(None, 200).to_json()
+    return klass_response.SuccessResult(None, 200)

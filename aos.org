@@ -52,6 +52,14 @@
 | order_detail | list  | eg:'[id] [count] [price];[id2] [count] [price2]' |
 
 ***** 餐桌模型 Desk
+| property  | type    | desc                                        |
+|-----------+---------+---------------------------------------------|
+| id        | int     | the primary                                 |
+| desk_size | int     | the count of this desk's seats              |
+| disabled  | boolean |                                             |
+| shop_id   | int     | the desk belongs to the shop                |
+| order     | int     | desk's order                                |
+| room      | int     | you can contain the desks by different room |
 
 ** RESTFUL接口
 ***** 用户接口 User's api
@@ -102,5 +110,23 @@
 | update_order_dishes | order_id     | same up        | update dish list of this order |
 | get_dishes_of_order | order_id     | same up        | get dishes of this order       |
 
+***** 餐桌接口 desk's api
+| Function Name            | Entry Params | Out Params     | Desc                             |
+|--------------------------+--------------+----------------+----------------------------------|
+| get_desks                | shop_id      | Json format CR | desks                            |
+| update_desks             | shop_id      | same up        | change desks infor,eg:room,order |
+| toggle_status_by_desk_id | desk_id      | same up        | disabled or not                  |
+| add_desks                | shop_id      | same up        | add a few desks                  |
+| del_desk_by_id           | desk_id      | same up        | delete                           |
+
 
 ** 计划
+后端服务开发
+
+小程序开发
+
+管理平台页面开发
+
+终端开发（安卓版本）
+
+终端软件（windows版本）

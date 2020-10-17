@@ -36,17 +36,17 @@ def register():
     user_name = request.json.get('user_name')
     pat_user_name = r'^[0-9a-zA-Z_]{4,18}$'
     if re.match(pat_user_name, user_name) is None:
-        return klass_response.FailedResult('format_err', 'user name').to_json()
+        return klass_response.FailedResult('format_err', 'user name')
 
     password = request.json.get('password')
     pat_password = r'^[0-9a-zA-Z_]{6,20}$'
     if re.match(pat_password, password) is None:
-        return klass_response.FailedResult('format_err', 'password').to_json()
+        return klass_response.FailedResult('format_err', 'password')
 
     email = request.json.get('email')
     pat_email = r'^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$'
     if re.match(pat_email, email) is None:
-        return klass_response.FailedResult('format_err', 'email').to_json()
+        return klass_response.FailedResult('format_err', 'email')
     my = User()
     my.user_name = user_name
     my.password = password
@@ -58,9 +58,9 @@ def register():
         db.session.commit()
     except IntegrityError:
         return klass_response.FailedResult('params_err',
-                                           'mysql commit').to_json()
+                                           'mysql commit')
 
-    return klass_response.SuccessResult(my.to_json(), 200).to_json()
+    return klass_response.SuccessResult(my.to_json(), 200)
 
 
 @api.route('/login', methods=['POST'])
@@ -70,14 +70,14 @@ def login():
     user_name = request.json.get('user_name')
     user = User.query.filter_by(user_name=user_name).first()
     if user is None:
-        return klass_response.FailedResult('not_exist', 'User').to_json()
+        return klass_response.FailedResult('not_exist', 'User')
     if not user.disabled:
         return klass_response.FailedResult('account_not_active',
-                                           user.user_name).to_json()
+                                           user.user_name)
 
     password = request.json.get('password')
     if not user.verify_password(password):
         return klass_response.FailedResult('password_err',
-                                           user.user_name).to_json()
+                                           user.user_name)
 
-    return klass_response.SuccessResult(user.to_json(), 200).to_json()
+    return klass_response.SuccessResult(user.to_json(), 200)

@@ -11,3 +11,4 @@ from .shop import Shop
 from .dish import Dish
 from .category import Category
 from .order import Order
+from .desk import Desk
