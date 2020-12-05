@@ -11,6 +11,8 @@ flask-httpauth = "*"
 flask-sqlalchemy = "*"
 requests = "*"
 flask-migrate = "*"
+flask-cors = "*"
+faker = "*"
 
 [requires]
 python_version = "3.8"

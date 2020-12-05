@@ -14,5 +14,6 @@ from . import shop
 from . import dish
 from . import category
 from . import order
+from . import desk
 
 from . import auth

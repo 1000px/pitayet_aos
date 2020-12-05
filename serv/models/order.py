@@ -14,6 +14,10 @@ order's model file
 """
 from datetime import datetime
 from serv import db
+from .dish import Dish
+from .desk import Desk
+import hashlib
+import time
 
 
 class Order(db.Model):
@@ -27,8 +31,20 @@ class Order(db.Model):
     end_time = db.Column(db.DateTime())
     order_price = db.Column(db.Float)
     shop_id = db.Column(db.Integer, db.ForeignKey('shops.id'))
+    desk_id = db.Column(db.Integer)
     # [id] [count] [price_single];[id] [count] [price_single];
     order_detail = db.Column(db.Text())
+    
+    def __init__(self, order_price, desk_id, shop_id=1):
+        time_str = time.strftime('%Y%m%d%H%M%S', time.localtime())
+        m = hashlib.md5()
+        m.update(time_str.encode('utf-8'))
+
+        self.order_name =  time_str + '-' + m.hexdigest()
+        self.order_price = order_price
+        self.desk_id = desk_id
+        self.shop_id = shop_id
+
 
     @property
     def dishes(self):
@@ -36,7 +52,7 @@ class Order(db.Model):
         # str to list
         if self.order_detail is None:
             return None
-        return [{'id': int(dish.split(' ')[0]),
+        return [{'dish': Dish.query.filter_by(id=int(dish.split(' ')[0])).first().to_json(),
                 'count': int(dish.split(' ')[1])}
                 for dish in self.order_detail.split(';')]
 
@@ -51,5 +67,6 @@ class Order(db.Model):
             'start_time': self.start_time,
             'end_time': self.end_time,
             'order_price': self.order_price,
+            'desk': Desk.query.filter_by(id=self.desk_id).first().to_json(),
             'dishes': self.dishes
         }

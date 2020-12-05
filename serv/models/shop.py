@@ -25,6 +25,10 @@ class Shop(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     dishes = db.relationship('Dish', backref='Shop')
 
+    def __init__(self, shop_name, shop_img='default'):
+        self.shop_name = shop_name
+        self.shop_img = shop_img
+
     def to_json(self):
         """return json object of the Shop instance"""
         return {

@@ -53,12 +53,14 @@ def add_desks(shop_id):
     """add desks"""
     shop = Shop.query.filter_by(id=shop_id).first()
     if shop is None:
+        print('shop is none...')
         return klass_response.FailedResult('not_exist', 'Shop')
     desks = request.json.get('desks')
     if len(desks) <= 0:
         return klass_response.FailedResult('params_err', 'desks')
     for desk_ in desks:
         desk = Desk()
+        desk.shop_id = shop_id
         if desk_['desk_size'] is not None:
             desk.desk_size = desk_['desk_size']
         if desk_['desk_num'] is not None:

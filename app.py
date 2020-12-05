@@ -7,7 +7,7 @@ You can run this server at this
 import os
 import click
 from serv import create_app, db
-from serv.models import User, Shop, Dish, Category
+from serv.models import User, Shop, Dish, Category, Desk, Order
 
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -21,7 +21,9 @@ def make_shell_context():
         User=User,
         Shop=Shop,
         Dish=Dish,
-        Category=Category
+        Category=Category,
+        Order=Order,
+        Desk=Desk
     )
 
 

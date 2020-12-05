@@ -34,8 +34,8 @@ def get_orders(shop_id):
     shop = Shop.query.filter_by(id=shop_id).first()
     if shop is None:
         return klass_response.FailedResult('not_exist', 'Shop')
-    page = request.get('page', 1, type=int)
-    per_page = request.get('per_page', 10, type=int)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
     pagination = Order.query.paginate(
         page,
         per_page=per_page,

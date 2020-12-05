@@ -29,6 +29,14 @@ class Dish(db.Model):
     shop_id = db.Column(db.Integer, db.ForeignKey('shops.id'))
     hot = db.Column(db.Boolean, default=False)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    dish_price = db.Column(db.Float)
+    
+    def __init__(self, dish_name, shop_id, dish_price, dish_desc='默认描述', hot=False):
+        self.dish_name = dish_name
+        self.shop_id = shop_id
+        self.dish_price = dish_price
+        self.dish_desc = dish_desc
+        self.hot = hot
 
     def to_json(self):
         """return json object of Dish instance"""
@@ -38,6 +46,7 @@ class Dish(db.Model):
             'dish_desc': self.dish_desc,
             'dish_img': self.dish_img,
             'shop_id': self.shop_id,
+            'dish_price': self.dish_price,
             'hot': self.hot,
             'category_id': self.category_id
         }

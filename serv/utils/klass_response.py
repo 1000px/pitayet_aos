@@ -71,7 +71,8 @@ class SuccessResult():
 class FailedResult():
     """Failed Result class"""
     def __new__(self, error_type, role):
-        result = error_dict[error_type]
+        print(error_dict[error_type])
+        result = error_dict[error_type].copy()
         result['msg'] = role + ' : ' + result['msg']
 
         response = jsonify(result)

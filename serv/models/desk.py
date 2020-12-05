@@ -25,9 +25,16 @@ class Desk(db.Model):
     desk_size = db.Column(db.Integer, default=0)
     desk_num = db.Column(db.Integer, default=1)
     disabled = db.Column(db.Boolean, default=False)
-    order = db.Column(db.Integer, default=1)
-    room = db.Column(db.Integer, default=1)
+    order = db.Column(db.Integer, default=1) # 顺序
+    room = db.Column(db.Integer, default=1) # 房间
     shop_id = db.Column(db.Integer, db.ForeignKey('shops.id'))
+
+    def __init__(self, desk_num, shop_id, desk_size=6, room=1, order=1):
+        self.desk_num = desk_num
+        self.shop_id = shop_id
+        self.desk_size = desk_size
+        self.room = room
+        self.order = order
 
     def to_json(self):
         """return desk json's object"""
